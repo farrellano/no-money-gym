@@ -12,20 +12,26 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@marsidev/react-turnstile": "^1.5.4",
     "dexie": "^4.4.4",
     "dexie-react-hooks": "^4.4.0",
     "jszip": "^3.10.1",
     "next": "16.2.12",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "resend": "^6.18.1"
   },
   "devDependencies": {
+    "@remotion/bundler": "^4.0.500",
+    "@remotion/cli": "^4.0.500",
+    "@remotion/renderer": "^4.0.500",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
+    "remotion": "^4.0.500",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
