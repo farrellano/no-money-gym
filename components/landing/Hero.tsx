@@ -1,0 +1,20 @@
+import Link from 'next/link';
+
+export function Hero() {
+  return (
+    <section className="flex flex-col items-center px-4 pt-16 pb-12 text-center">
+      <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl">
+        Arma rutinas tipo Tabata con tus propios videos
+      </h1>
+      <p className="mt-4 max-w-md text-lg text-zinc-400">
+        Gratis, sin suscripciones, sin nube. Tus datos se quedan en tu dispositivo.
+      </p>
+      <Link
+        href="/banco-ejercicios"
+        className="mt-8 rounded-lg bg-green-600 px-8 py-3 text-lg font-medium text-white shadow-lg active:bg-green-700 hover:bg-green-500 transition-colors"
+      >
+        Comenzar
+      </Link>
+    </section>
+  );
+}
