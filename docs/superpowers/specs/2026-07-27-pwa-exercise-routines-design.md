@@ -11,7 +11,7 @@ A Progressive Web App for creating Tabata/circuit exercise routines using locall
 - **Storage:** Dexie.js over IndexedDB for all data (videos as Blobs, exercises, circuits, config)
 - **Styling:** Tailwind CSS 4
 - **Drag & Drop:** dnd-kit
-- **PWA:** Serwist (or next-pwa) for service worker + manifest
+- **PWA:** next-pwa for service worker + manifest
 - **Audio:** Web Speech API (es-ES) + native Audio() for beeps
 - **Screen:** Wake Lock API during playback
 - **Backup:** JSZip for export/import
@@ -22,10 +22,14 @@ A Progressive Web App for creating Tabata/circuit exercise routines using locall
 VideoRecord: id, blob, duracionTotal, createdAt
 EjercicioRecord: id, nombre, grupoMuscular, videoId (FK→VideoRecord), startSec, endSec, createdAt
 CircuitoRecord: id, nombre, rondas, ejercicios[{ejercicioId, duracionSeg, descansoSeg}], createdAt
-ConfigRecord: id, vozActivada, sonidosActivados, vozLang
+ConfigRecord: id (always "1", singleton), vozActivada, sonidosActivados, vozLang
 ```
 
 Videos stored once as Blobs; exercises reference by videoId. No duplication.
+
+## Navigation
+
+Bottom tab bar (mobile-first), always visible except during fullscreen playback. Tabs: Ejercicios, Circuitos, Ajustes.
 
 ## Routes
 
@@ -78,6 +82,7 @@ Videos stored once as Blobs; exercises reference by videoId. No duplication.
 - Show storage usage vs quota in settings (`navigator.storage.estimate()`)
 - `URL.createObjectURL(blob)` with cleanup in useEffect return
 - No localStorage for video data
+- **Error handling:** When storage quota is exceeded (e.g., during video upload), show a modal dialog explaining the issue and suggesting to free space in Settings
 
 ## Backup System
 
@@ -125,5 +130,5 @@ Videos stored once as Blobs; exercises reference by videoId. No duplication.
 
 - dexie
 - dnd-kit (@dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities)
-- serwist (or next-pwa) for PWA
+- next-pwa for PWA
 - jszip for backup
