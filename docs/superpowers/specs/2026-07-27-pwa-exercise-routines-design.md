@@ -11,7 +11,7 @@ A Progressive Web App for creating Tabata/circuit exercise routines using locall
 - **Storage:** Dexie.js over IndexedDB for all data (videos as Blobs, exercises, circuits, config)
 - **Styling:** Tailwind CSS 4
 - **Drag & Drop:** dnd-kit
-- **PWA:** next-pwa for service worker + manifest
+- **PWA:** Manual setup (Next.js 16 built-in `app/manifest.ts` + `public/sw.js`)
 - **Audio:** Web Speech API (es-ES) + native Audio() for beeps
 - **Screen:** Wake Lock API during playback
 - **Backup:** JSZip for export/import
@@ -130,5 +130,5 @@ Bottom tab bar (mobile-first), always visible except during fullscreen playback.
 
 - dexie
 - dnd-kit (@dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities)
-- next-pwa for PWA
+- (No PWA library needed — Next.js 16 built-in manifest + manual service worker)
 - jszip for backup
