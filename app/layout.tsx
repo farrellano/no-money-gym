@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist } from 'next/font/google';
 import { BottomNav } from '@/components/BottomNav';
+import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar';
 import './globals.css';
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="min-h-full bg-zinc-950 text-white font-sans pb-16">
         <main className="flex-1">{children}</main>
         <BottomNav />
+        <ServiceWorkerRegistrar />
       </body>
     </html>
   );
