@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { db, type EjercicioRecord, type VideoRecord } from '@/lib/db';
+import { db, type EjercicioRecord } from '@/lib/db';
 import { VideoTrimmer } from './VideoTrimmer';
 import { StorageModal } from './StorageModal';
 

@@ -41,7 +41,10 @@ export function useCircuitTimer({
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stateRef = useRef(state);
-  stateRef.current = state;
+
+  useEffect(() => {
+    stateRef.current = state;
+  });
 
   const announceExercise = useCallback(
     (name: string) => {

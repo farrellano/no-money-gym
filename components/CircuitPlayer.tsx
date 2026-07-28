@@ -48,7 +48,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
     return () => {
       if (url) URL.revokeObjectURL(url);
     };
-  }, [currentEjercicio?.videoId]);
+  }, [currentEjercicio?.videoId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Loop video between startSec and endSec
   useEffect(() => {
@@ -81,6 +81,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
     if (currentEjercicio && state.isRunning && state.phase === 'work') {
       announceExercise(currentEjercicio.nombre);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.currentExerciseIndex, state.currentRound]);
 
   // Pause/play video based on state

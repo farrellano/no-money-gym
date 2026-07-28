@@ -120,7 +120,7 @@ export default function BancoEjerciciosPage() {
         <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
           <span className="text-4xl">💪</span>
           <p className="mt-2 text-sm">No hay ejercicios aún</p>
-          <p className="text-xs">Toca "+ Nuevo" para agregar uno</p>
+          <p className="text-xs">Toca &quot;+ Nuevo&quot; para agregar uno</p>
         </div>
       )}
     </div>
