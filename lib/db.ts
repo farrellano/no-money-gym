@@ -37,6 +37,7 @@ export interface ConfigRecord {
   vozActivada: boolean;
   sonidosActivados: boolean;
   vozLang: string;
+  nombreUsuario?: string;
 }
 
 const db = new Dexie('NoMoneyGymDB') as Dexie & {

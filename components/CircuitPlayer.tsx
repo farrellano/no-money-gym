@@ -57,7 +57,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
   useEffect(() => {
     // Reset intro flag when exercise changes
     hasPlayedIntroRef.current = false;
-  }, [currentEjercicio?.videoId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentEjercicio?.videoId]);
 
   useEffect(() => {
     const video = videoRef.current;

@@ -18,10 +18,64 @@ const GRUPOS_MUSCULARES = [
   'cardio',
 ];
 
+function OnboardingModal({ onSave }: { onSave: (name: string) => void }) {
+  const [name, setName] = useState('');
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4">
+      <div className="w-full max-w-sm rounded-xl bg-zinc-800 p-6 shadow-xl">
+        <h2 className="text-lg font-bold text-white">¡Bienvenido! 👋</h2>
+        <p className="mt-2 text-sm text-zinc-400">¿Cómo te llamas?</p>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Tu nombre"
+          autoFocus
+          className="mt-3 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white placeholder:text-zinc-500"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && name.trim()) onSave(name.trim());
+          }}
+        />
+        <button
+          onClick={() => name.trim() && onSave(name.trim())}
+          disabled={!name.trim()}
+          className="mt-4 w-full rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50 active:bg-green-700"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function BancoEjerciciosPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingEjercicio, setEditingEjercicio] = useState<EjercicioRecord | undefined>();
   const [filtro, setFiltro] = useState('todos');
+  const [justSavedName, setJustSavedName] = useState(false);
+
+  const config = useLiveQuery(() => db.config.get('1'));
+
+  // Derive onboarding state from config (no useEffect needed)
+  const nombreUsuario = config?.nombreUsuario ?? null;
+  const showOnboarding = config !== undefined && !nombreUsuario && !justSavedName;
+
+  const handleSaveName = async (name: string) => {
+    const existing = await db.config.get('1');
+    if (existing) {
+      await db.config.update('1', { nombreUsuario: name });
+    } else {
+      await db.config.put({
+        id: '1',
+        vozActivada: true,
+        sonidosActivados: true,
+        vozLang: 'es-ES',
+        nombreUsuario: name,
+      });
+    }
+    setJustSavedName(true);
+  };
 
   const ejercicios = useLiveQuery(() => {
     if (filtro === 'todos') {
@@ -77,6 +131,8 @@ export default function BancoEjerciciosPage() {
 
   return (
     <div className="p-4 space-y-4">
+      {showOnboarding && <OnboardingModal onSave={handleSaveName} />}
+
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Ejercicios</h1>
         <button
@@ -86,6 +142,13 @@ export default function BancoEjerciciosPage() {
           + Nuevo
         </button>
       </div>
+
+      {/* Greeting + muscle group question */}
+      {nombreUsuario && (
+        <p className="text-sm text-zinc-400">
+          Hola, {nombreUsuario} 👋 ¿Qué grupo muscular trabajaremos hoy?
+        </p>
+      )}
 
       {/* Muscle group filter */}
       <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
