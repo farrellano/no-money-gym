@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const BTC_ADDRESS = process.env.NEXT_PUBLIC_BTC_ADDRESS ?? '';
+const BTC_ADDRESS = 'bc1qwdcy9dmz9f7fmeveffhfzvw6mgxckzf96z57qj';
 
 export function Footer() {
   const [copied, setCopied] = useState(false);
