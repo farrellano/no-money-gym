@@ -10,7 +10,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-sm">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
-          <Image src="/logo.png" alt="NoMoneyGym" width={32} height={32} className="rounded-md" />
+          <Image src="/logonomoneygym.png" alt="NoMoneyGym" width={32} height={32} className="rounded-md" />
           <span className="text-lg font-bold text-white">{t.appName}</span>
         </div>
 
