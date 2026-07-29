@@ -21,6 +21,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { db, type CircuitoEjercicio, type EjercicioRecord } from '@/lib/db';
 import { useI18n } from '@/lib/i18n';
+import { NumberStepper } from './NumberStepper';
 
 interface SortableItemProps {
   id: string;
@@ -50,25 +51,29 @@ function SortableItem({ id, ejercicio, config, onConfigChange, onRemove, t }: So
       <div className="mt-2 flex gap-3">
         <div className="flex-1">
           <label className="text-[10px] text-zinc-500">{t.builderWorkLabel as string}</label>
-          <input
-            type="number"
-            min={5}
-            max={120}
-            value={config.duracionSeg}
-            onChange={(e) => onConfigChange(config.ejercicioId, 'duracionSeg', parseInt(e.target.value) || 30)}
-            className="mt-0.5 w-full rounded border border-zinc-600 bg-zinc-900 px-2 py-1 text-xs text-white"
-          />
+          <div className="mt-0.5">
+            <NumberStepper
+              value={config.duracionSeg}
+              onChange={(v) => onConfigChange(config.ejercicioId, 'duracionSeg', v)}
+              min={5}
+              max={120}
+              step={5}
+              size="sm"
+            />
+          </div>
         </div>
         <div className="flex-1">
           <label className="text-[10px] text-zinc-500">{t.builderRestLabel as string}</label>
-          <input
-            type="number"
-            min={0}
-            max={60}
-            value={config.descansoSeg}
-            onChange={(e) => onConfigChange(config.ejercicioId, 'descansoSeg', parseInt(e.target.value) || 10)}
-            className="mt-0.5 w-full rounded border border-zinc-600 bg-zinc-900 px-2 py-1 text-xs text-white"
-          />
+          <div className="mt-0.5">
+            <NumberStepper
+              value={config.descansoSeg}
+              onChange={(v) => onConfigChange(config.ejercicioId, 'descansoSeg', v)}
+              min={0}
+              max={60}
+              step={5}
+              size="sm"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -217,26 +222,16 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
 
       <div>
         <label className="text-xs text-zinc-500">{t.builderRoundsLabel}</label>
-        <input
-          type="number"
-          min={1}
-          max={20}
-          value={rondas}
-          onChange={(e) => setRondas(parseInt(e.target.value) || 1)}
-          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
-        />
+        <div className="mt-1">
+          <NumberStepper value={rondas} onChange={setRondas} min={1} max={20} step={1} />
+        </div>
       </div>
 
       <div>
         <label className="text-xs text-zinc-500">{t.builderRestBetweenLabel}</label>
-        <input
-          type="number"
-          min={0}
-          max={300}
-          value={descansoEntreRondas}
-          onChange={(e) => setDescansoEntreRondas(parseInt(e.target.value) || 0)}
-          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
-        />
+        <div className="mt-1">
+          <NumberStepper value={descansoEntreRondas} onChange={setDescansoEntreRondas} min={0} max={300} step={5} />
+        </div>
       </div>
 
       <div>
