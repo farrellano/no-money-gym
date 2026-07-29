@@ -1,0 +1,45 @@
+# NoMoneyGym
+
+## What is NoMoneyGym?
+NoMoneyGym is a free Progressive Web App (PWA) for creating custom workout routines using your own exercise videos. It works offline, requires no subscriptions, and stores all data locally on the user's device.
+
+## Key Features
+- Create Tabata and circuit training routines with personal exercise videos
+- Video trimming to select the active portion of each exercise
+- Customizable work/rest intervals and round configuration
+- Rest between rounds with configurable duration
+- Voice cues and sound alerts during workouts
+- Offline-first: works without internet after initial load
+- No cloud storage: all videos and data stay on the device (IndexedDB)
+- Export/import backup as .zip files
+- Bilingual interface: Spanish and English
+- Free forever: no subscriptions, no ads, no hidden costs
+
+## Who is it for?
+- People who want to exercise at home with no gym membership
+- Users who record their own exercise videos or download tutorials
+- Anyone looking for a free Tabata/HIIT timer with video guidance
+- Fitness enthusiasts who want custom circuit routines without paying for apps
+
+## How it works
+1. Record or download exercise videos to your device
+2. Upload videos to NoMoneyGym and trim the active portion
+3. Organize exercises by muscle group (legs, back, chest, shoulders, arms, core, glutes, cardio)
+4. Build circuits by selecting exercises, setting work/rest times, and choosing rounds
+5. Play your circuit with video playback, countdown timer, and voice cues
+
+## Technical Details
+- Built with Next.js as a PWA
+- Uses IndexedDB (Dexie) for local storage
+- No server-side data processing
+- No user accounts required
+- Works on any modern browser (mobile and desktop)
+
+## URL
+https://nomoneygym.com
+
+## Language
+Spanish (primary), English
+
+## Category
+Health & Fitness, Exercise, Workout Timer, Circuit Training, Tabata
