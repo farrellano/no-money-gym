@@ -10,8 +10,8 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'No Money Gym',
-  description: 'Rutinas de ejercicio con videos locales',
+  title: 'NoMoneyGym — Free Workout Routines with Your Own Videos',
+  description: 'Create custom Tabata and circuit training routines using your own exercise videos. Free, offline, no subscriptions.',
 };
 
 export const viewport: Viewport = {
