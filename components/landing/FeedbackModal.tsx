@@ -20,9 +20,12 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
 
   if (!open) return null;
 
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const canSubmit =
     nombre.trim() &&
     email.trim() &&
+    isValidEmail &&
     estrellas > 0 &&
     comentario.trim() &&
     turnstileToken &&
@@ -92,6 +95,9 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
               required
               className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white"
             />
+            {email && !isValidEmail && (
+              <p className="mt-1 text-xs text-red-400">Email inválido</p>
+            )}
           </div>
 
           <div>
