@@ -173,9 +173,9 @@ export function ExerciseForm({ ejercicio, onSaved, onCancel }: ExerciseFormProps
             onChange={(e) => setGrupoMuscular(e.target.value)}
             className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
           >
-            {GRUPOS_MUSCULARES.map((g) => (
+            {GRUPOS_MUSCULARES.map((g, i) => (
               <option key={g} value={g}>
-                {g.charAt(0).toUpperCase() + g.slice(1)}
+                {(t.muscleGroups as string[])[i + 1]}
               </option>
             ))}
           </select>
