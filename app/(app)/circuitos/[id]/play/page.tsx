@@ -3,20 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { db, type CircuitoRecord, type EjercicioRecord, type ConfigRecord } from '@/lib/db';
+import { useI18n } from '@/lib/i18n';
 import { CircuitPlayer } from '@/components/CircuitPlayer';
 
-const TIPS = [
-  '🧴 Ten una toalla cerca para secarte el sudor',
-  '💧 Ten tu botella de agua a mano',
-  '🏋️ Asegúrate de tener espacio suficiente para moverte',
-  '🔊 Sube el volumen si activaste los avisos de voz',
-  '🤸 Haz un calentamiento previo de 5 minutos',
-];
-
 function PreStartScreen({ circuito, onStart }: { circuito: CircuitoRecord; onStart: () => void }) {
-  // Pick 3 random tips
+  const { t } = useI18n();
+
   const [tips] = useState(() => {
-    const shuffled = [...TIPS].sort(() => Math.random() - 0.5);
+    const shuffled = [...t.tips].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 3);
   });
 
@@ -28,7 +22,7 @@ function PreStartScreen({ circuito, onStart }: { circuito: CircuitoRecord; onSta
       </p>
 
       <div className="mt-8 w-full max-w-sm space-y-3">
-        <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">Antes de empezar</p>
+        <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">{t.tipsTitle}</p>
         {tips.map((tip) => (
           <div key={tip} className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-300">
             {tip}
@@ -40,7 +34,7 @@ function PreStartScreen({ circuito, onStart }: { circuito: CircuitoRecord; onSta
         onClick={onStart}
         className="mt-10 rounded-lg bg-green-600 px-10 py-3 text-lg font-medium text-white shadow-lg active:bg-green-700"
       >
-        ▶ Iniciar circuito
+        {t.startCircuit}
       </button>
     </div>
   );

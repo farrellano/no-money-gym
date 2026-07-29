@@ -21,6 +21,14 @@ interface UseCircuitTimerOptions {
   descansoEntreRondas: number;
   vozActivada: boolean;
   sonidosActivados: boolean;
+  speechLang: string;
+  speechTexts: {
+    exercise: (name: string) => string;
+    rest: string;
+    roundRest: string;
+    prepare: string;
+    finished: string;
+  };
   onFinished: () => void;
 }
 
@@ -30,6 +38,8 @@ export function useCircuitTimer({
   descansoEntreRondas,
   vozActivada,
   sonidosActivados,
+  speechLang,
+  speechTexts,
   onFinished,
 }: UseCircuitTimerOptions) {
   const [state, setState] = useState<TimerState>({
@@ -51,9 +61,9 @@ export function useCircuitTimer({
   const announceExercise = useCallback(
     (name: string) => {
       if (sonidosActivados) playBeep();
-      if (vozActivada) speak(`Ejercicio: ${name}`);
+      if (vozActivada) speak(speechTexts.exercise(name), speechLang);
     },
-    [vozActivada, sonidosActivados]
+    [vozActivada, sonidosActivados, speechTexts, speechLang]
   );
 
   const advanceExercise = useCallback(
@@ -65,7 +75,7 @@ export function useCircuitTimer({
         const nextRound = s.currentRound + 1;
         if (nextRound > rondas) {
           // Circuit complete
-          if (vozActivada) speak('Circuito terminado');
+          if (vozActivada) speak(speechTexts.finished, speechLang);
           setState((prev) => ({ ...prev, phase: 'finished', isRunning: false, secondsLeft: 0 }));
           if (intervalRef.current) clearInterval(intervalRef.current);
           onFinished();
@@ -73,7 +83,7 @@ export function useCircuitTimer({
         }
         // Rest between rounds before starting next round
         if (descansoEntreRondas > 0) {
-          if (vozActivada) speak('Descanso entre rondas');
+          if (vozActivada) speak(speechTexts.roundRest, speechLang);
           setState((prev) => ({
             ...prev,
             phase: 'round-rest',
@@ -100,7 +110,7 @@ export function useCircuitTimer({
         }));
       }
     },
-    [ejercicios, rondas, descansoEntreRondas, vozActivada, onFinished]
+    [ejercicios, rondas, descansoEntreRondas, vozActivada, speechTexts, speechLang, onFinished]
   );
 
   const tick = useCallback(() => {
@@ -114,7 +124,7 @@ export function useCircuitTimer({
 
     // Prepare announcement at 3s remaining in rest
     if ((s.phase === 'rest' || s.phase === 'round-rest') && newSeconds === 3 && vozActivada) {
-      speak('Prepárate');
+      speak(speechTexts.prepare, speechLang);
     }
 
     if (newSeconds <= 0) {
@@ -128,7 +138,7 @@ export function useCircuitTimer({
           // Circuit complete — no rest needed
           advanceExercise(s);
         } else if (currentEj.descansoSeg > 0) {
-          if (vozActivada) speak('Descanso');
+          if (vozActivada) speak(speechTexts.rest, speechLang);
           setState((prev) => ({ ...prev, phase: 'rest', secondsLeft: currentEj.descansoSeg }));
         } else {
           // No rest, go directly to next exercise
@@ -147,7 +157,7 @@ export function useCircuitTimer({
     } else {
       setState((prev) => ({ ...prev, secondsLeft: newSeconds }));
     }
-  }, [ejercicios, rondas, vozActivada, sonidosActivados, advanceExercise]);
+  }, [ejercicios, rondas, vozActivada, sonidosActivados, speechTexts, speechLang, advanceExercise]);
 
   const start = useCallback(() => {
     setState((prev) => ({ ...prev, isRunning: true }));

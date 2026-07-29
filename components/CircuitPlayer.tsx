@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { db, type CircuitoRecord, type EjercicioRecord, type ConfigRecord } from '@/lib/db';
 import { useCircuitTimer } from '@/hooks/useCircuitTimer';
 import { useWakeLock } from '@/hooks/useWakeLock';
+import { useI18n } from '@/lib/i18n';
 import { Timer } from './Timer';
 
 interface CircuitPlayerProps {
@@ -17,6 +18,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const wakeLock = useWakeLock();
+  const { t } = useI18n();
 
   const ejerciciosMap = new Map(ejercicios.map((e) => [e.id, e]));
 
@@ -26,6 +28,14 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
     descansoEntreRondas: circuito.descansoEntreRondas ?? 30,
     vozActivada: config.vozActivada,
     sonidosActivados: config.sonidosActivados,
+    speechLang: t.speechLang,
+    speechTexts: {
+      exercise: t.speechExercise,
+      rest: t.speechRest,
+      roundRest: t.speechRoundRest,
+      prepare: t.speechPrepare,
+      finished: t.speechFinished,
+    },
     onFinished: () => {
       wakeLock.release();
     },

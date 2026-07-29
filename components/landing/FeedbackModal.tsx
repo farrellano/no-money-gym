@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
+import { useI18n } from '@/lib/i18n';
 import { StarRating } from './StarRating';
 
 interface FeedbackModalProps {
@@ -17,6 +18,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const { t } = useI18n();
 
   if (!open) return null;
 
@@ -60,7 +62,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4">
         <div className="w-full max-w-sm rounded-xl bg-zinc-800 p-6 text-center">
-          <p className="text-lg font-bold text-white">¡Gracias por tu feedback! 🙏</p>
+          <p className="text-lg font-bold text-white">{t.feedbackThanks}</p>
         </div>
       </div>
     );
@@ -70,13 +72,13 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4">
       <div className="w-full max-w-sm rounded-xl bg-zinc-800 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-white">Tu feedback</h2>
+          <h2 className="text-lg font-bold text-white">{t.feedbackTitle}</h2>
           <button onClick={onClose} className="text-zinc-400 text-sm">✕</button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs text-zinc-500">Nombre</label>
+            <label className="text-xs text-zinc-500">{t.feedbackName}</label>
             <input
               type="text"
               value={nombre}
@@ -87,7 +89,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
           </div>
 
           <div>
-            <label className="text-xs text-zinc-500">Email</label>
+            <label className="text-xs text-zinc-500">{t.feedbackEmail}</label>
             <input
               type="email"
               value={email}
@@ -96,19 +98,19 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
               className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white"
             />
             {email && !isValidEmail && (
-              <p className="mt-1 text-xs text-red-400">Email inválido</p>
+              <p className="mt-1 text-xs text-red-400">{t.feedbackInvalidEmail}</p>
             )}
           </div>
 
           <div>
-            <label className="text-xs text-zinc-500">Calificación</label>
+            <label className="text-xs text-zinc-500">{t.feedbackRating}</label>
             <div className="mt-1">
               <StarRating value={estrellas} onChange={setEstrellas} />
             </div>
           </div>
 
           <div>
-            <label className="text-xs text-zinc-500">Comentario</label>
+            <label className="text-xs text-zinc-500">{t.feedbackComment}</label>
             <textarea
               value={comentario}
               onChange={(e) => setComentario(e.target.value)}
@@ -135,7 +137,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
             disabled={!canSubmit}
             className="w-full rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 disabled:opacity-50 active:bg-zinc-200"
           >
-            {status === 'sending' ? 'Enviando...' : 'Enviar feedback'}
+            {status === 'sending' ? t.feedbackSending : t.feedbackSend}
           </button>
         </form>
       </div>

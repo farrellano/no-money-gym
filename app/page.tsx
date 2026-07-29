@@ -5,6 +5,7 @@ import { Faq } from '@/components/landing/Faq';
 import { Footer } from '@/components/landing/Footer';
 import { JsonLd } from '@/components/landing/JsonLd';
 import { LandingFeedback } from '@/components/landing/LandingFeedback';
+import { Header } from '@/components/landing/Header';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://nomoneygym.com'),
@@ -38,6 +39,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-zinc-950">
       <JsonLd />
+      <Header />
       <Hero />
       <ExplainerVideo />
       <Faq />

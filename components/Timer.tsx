@@ -1,6 +1,7 @@
 'use client';
 
 import { type TimerPhase } from '@/hooks/useCircuitTimer';
+import { useI18n } from '@/lib/i18n';
 
 interface TimerProps {
   secondsLeft: number;
@@ -11,6 +12,7 @@ export function Timer({ secondsLeft, phase }: TimerProps) {
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
   const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const { t } = useI18n();
 
   const phaseColors: Record<TimerPhase, string> = {
     work: 'text-green-400',
@@ -20,10 +22,10 @@ export function Timer({ secondsLeft, phase }: TimerProps) {
   };
 
   const phaseLabels: Record<TimerPhase, string> = {
-    work: 'TRABAJO',
-    rest: 'DESCANSO',
-    'round-rest': 'DESCANSO ENTRE RONDAS',
-    finished: 'COMPLETADO',
+    work: t.phaseWork,
+    rest: t.phaseRest,
+    'round-rest': t.phaseRoundRest,
+    finished: t.phaseFinished,
   };
 
   return (
