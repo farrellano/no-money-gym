@@ -164,7 +164,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
 
         {/* Overlay: round info */}
         <div className="absolute top-4 left-4 rounded-full bg-black/60 px-3 py-1 text-xs text-white">
-          Ronda {state.currentRound}/{state.totalRounds}
+          {t.playerRound} {state.currentRound}/{state.totalRounds}
         </div>
 
         {/* Exit button */}
@@ -172,7 +172,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
           onClick={handleExit}
           className="absolute top-4 right-4 rounded-full bg-black/60 px-3 py-1 text-xs text-white"
         >
-          ✕ Salir
+          {t.playerExit}
         </button>
       </div>
 
@@ -190,14 +190,14 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
               onClick={handleExit}
               className="rounded-lg bg-white px-6 py-3 text-sm font-medium text-zinc-900"
             >
-              Terminar
+              {t.playerFinish}
             </button>
           ) : state.isRunning ? (
             <button
               onClick={pause}
               className="rounded-lg border border-zinc-600 px-6 py-3 text-sm text-white"
             >
-              ⏸ Pausar
+              {t.playerPause}
             </button>
           ) : (
             <>
@@ -205,13 +205,13 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
                 onClick={handleStart}
                 className="rounded-lg bg-green-600 px-6 py-3 text-sm font-medium text-white"
               >
-                ▶ {state.secondsLeft === circuito.ejercicios[0]?.duracionSeg && state.currentRound === 1 ? 'Iniciar' : 'Continuar'}
+                {state.secondsLeft === circuito.ejercicios[0]?.duracionSeg && state.currentRound === 1 ? t.playerStart : t.playerContinue}
               </button>
               <button
                 onClick={reset}
                 className="rounded-lg border border-zinc-600 px-6 py-3 text-sm text-white"
               >
-                ↺ Reiniciar
+                {t.playerReset}
               </button>
             </>
           )}

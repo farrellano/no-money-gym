@@ -89,6 +89,15 @@ export const translations = {
     speechFinished: 'Circuito terminado',
     speechLang: 'es-ES',
 
+    // Circuit Player
+    playerRound: 'Ronda',
+    playerExit: '✕ Salir',
+    playerFinish: 'Terminar',
+    playerPause: '⏸ Pausar',
+    playerStart: '▶ Iniciar',
+    playerContinue: '▶ Continuar',
+    playerReset: '↺ Reiniciar',
+
     // BottomNav
     navExercises: 'Ejercicios',
     navCircuits: 'Circuitos',
@@ -235,6 +244,15 @@ export const translations = {
     speechPrepare: 'Get ready',
     speechFinished: 'Circuit completed',
     speechLang: 'en-US',
+
+    // Circuit Player
+    playerRound: 'Round',
+    playerExit: '✕ Exit',
+    playerFinish: 'Finish',
+    playerPause: '⏸ Pause',
+    playerStart: '▶ Start',
+    playerContinue: '▶ Continue',
+    playerReset: '↺ Reset',
 
     // BottomNav
     navExercises: 'Exercises',
