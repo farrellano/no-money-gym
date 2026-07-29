@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { db, type EjercicioRecord } from '@/lib/db';
+import { useI18n } from '@/lib/i18n';
 
 interface ExerciseCardProps {
   ejercicio: EjercicioRecord;
@@ -12,6 +13,11 @@ interface ExerciseCardProps {
 export function ExerciseCard({ ejercicio, onEdit, onDelete }: ExerciseCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [thumbnailReady, setThumbnailReady] = useState(false);
+  const { t } = useI18n();
+
+  // Map DB key to translated label
+  const groupIndex = (t.muscleGroupKeys as string[]).indexOf(ejercicio.grupoMuscular);
+  const groupLabel = groupIndex >= 0 ? (t.muscleGroups as string[])[groupIndex] : ejercicio.grupoMuscular;
 
   // Generate thumbnail from video at startSec
   useEffect(() => {
@@ -62,14 +68,14 @@ export function ExerciseCard({ ejercicio, onEdit, onDelete }: ExerciseCardProps)
       <div className="p-3">
         <h3 className="text-sm font-medium text-white truncate">{ejercicio.nombre}</h3>
         <span className="mt-0.5 inline-block rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">
-          {ejercicio.grupoMuscular}
+          {groupLabel}
         </span>
         <div className="mt-2 flex gap-2">
           <button
             onClick={() => onEdit(ejercicio)}
             className="flex-1 rounded-md border border-zinc-700 px-2 py-1 text-xs text-zinc-300 active:bg-zinc-800"
           >
-            Editar
+            {t.circuitsEdit}
           </button>
           <button
             onClick={() => onDelete(ejercicio.id)}

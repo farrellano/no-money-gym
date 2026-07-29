@@ -182,7 +182,9 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
               }`}
             >
               <span className="font-medium">{ej.nombre}</span>
-              <span className="ml-2 text-xs text-zinc-500">{ej.grupoMuscular}</span>
+              <span className="ml-2 text-xs text-zinc-500">
+                {(t.muscleGroups as string[])[(t.muscleGroupKeys as string[]).indexOf(ej.grupoMuscular)] ?? ej.grupoMuscular}
+              </span>
             </button>
           ))}
           {(!allEjercicios || allEjercicios.length === 0) && (
