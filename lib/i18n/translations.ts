@@ -73,6 +73,7 @@ export const translations = {
       '🤸 Haz un calentamiento previo de 5 minutos',
     ],
     startCircuit: '▶ Iniciar circuito',
+    loadingCircuit: 'Cargando circuito...',
 
     // Timer phases
     phaseWork: 'TRABAJO',
@@ -219,6 +220,7 @@ export const translations = {
       '🤸 Do a 5-minute warm-up first',
     ],
     startCircuit: '▶ Start circuit',
+    loadingCircuit: 'Loading circuit...',
 
     // Timer phases
     phaseWork: 'WORK',
