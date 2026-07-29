@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'NoMoneyGym — Free Workout Routines with Your Own Videos',
   description: 'Create custom Tabata and circuit training routines using your own exercise videos. Free, offline, no subscriptions.',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/icon.png',
     apple: '/logonomoneygym.png',
   },
 };
