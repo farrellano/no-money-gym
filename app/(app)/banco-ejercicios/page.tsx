@@ -55,11 +55,13 @@ export default function BancoEjerciciosPage() {
   const [filtro, setFiltro] = useState('todos');
   const [justSavedName, setJustSavedName] = useState(false);
 
-  const config = useLiveQuery(() => db.config.get('1'));
+  // Use null as sentinel to distinguish "loading" from "not found"
+  const config = useLiveQuery(() => db.config.get('1').then((c) => c ?? null), []);
 
-  // Derive onboarding state from config (no useEffect needed)
+  // config is undefined = still loading, null = not found, object = found
+  const isLoaded = config !== undefined;
   const nombreUsuario = config?.nombreUsuario ?? null;
-  const showOnboarding = config !== undefined && !nombreUsuario && !justSavedName;
+  const showOnboarding = isLoaded && !nombreUsuario && !justSavedName;
 
   const handleSaveName = async (name: string) => {
     const existing = await db.config.get('1');
