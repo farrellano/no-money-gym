@@ -17,6 +17,7 @@ interface CircuitPlayerProps {
 export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoReady, setVideoReady] = useState(false);
   const wakeLock = useWakeLock();
   const { t } = useI18n();
 
@@ -48,6 +49,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
   useEffect(() => {
     if (!currentEjercicio) return;
 
+    setVideoReady(false);
     let url: string | null = null;
     db.videos.get(currentEjercicio.videoId).then((video) => {
       if (video) {
@@ -72,18 +74,24 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
       }
     };
 
-    const handleLoadedData = () => {
+    const handleLoadedMetadata = () => {
       video.currentTime = currentEjercicio.startSec;
+    };
+
+    const handleSeeked = () => {
+      setVideoReady(true);
       if (state.isRunning && state.phase === 'work') {
         video.play();
       }
     };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('seeked', handleSeeked);
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('seeked', handleSeeked);
     };
   }, [currentEjercicio, state.isRunning, state.phase]);
 
@@ -129,7 +137,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
           <video
             ref={videoRef}
             src={videoUrl}
-            className="absolute inset-0 w-full h-full object-contain"
+            className={`absolute inset-0 w-full h-full object-contain${videoReady ? '' : ' invisible'}`}
             playsInline
             muted
             loop={false}
