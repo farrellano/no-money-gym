@@ -75,7 +75,14 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
     };
 
     const handleLoadedMetadata = () => {
-      video.currentTime = currentEjercicio.startSec;
+      if (currentEjercicio.startSec === 0) {
+        setVideoReady(true);
+        if (state.isRunning && state.phase === 'work') {
+          video.play();
+        }
+      } else {
+        video.currentTime = currentEjercicio.startSec;
+      }
     };
 
     const handleSeeked = () => {
@@ -84,6 +91,17 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
         video.play();
       }
     };
+
+    // If video is already loaded (e.g. from preload cache), handle immediately
+    if (video.readyState >= 1) {
+      if (Math.abs(video.currentTime - currentEjercicio.startSec) < 0.5) {
+        setVideoReady(true);
+      } else if (currentEjercicio.startSec === 0) {
+        setVideoReady(true);
+      } else {
+        video.currentTime = currentEjercicio.startSec;
+      }
+    }
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
