@@ -22,38 +22,80 @@ export function ExerciseCard({ ejercicio, onEdit, onDelete }: ExerciseCardProps)
   // Generate thumbnail from video at startSec
   useEffect(() => {
     let url: string | null = null;
+    let revoked = false;
 
     db.videos.get(ejercicio.videoId).then((video) => {
       if (!video || !canvasRef.current) return;
 
       url = URL.createObjectURL(video.blob);
       const videoEl = document.createElement('video');
-      videoEl.preload = 'metadata';
+      videoEl.preload = 'auto';
       videoEl.muted = true;
       videoEl.playsInline = true;
+      videoEl.setAttribute('playsinline', '');
+
+      const revokeUrl = () => {
+        if (url && !revoked) {
+          URL.revokeObjectURL(url);
+          revoked = true;
+        }
+      };
 
       videoEl.onloadeddata = () => {
         videoEl.currentTime = ejercicio.startSec;
       };
 
       videoEl.onseeked = () => {
+        // On iOS, briefly play to force frame decode
+        const drawFrame = () => {
+          const canvas = canvasRef.current;
+          if (!canvas) { revokeUrl(); return; }
+          canvas.width = videoEl.videoWidth;
+          canvas.height = videoEl.videoHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(videoEl, 0, 0);
+            setThumbnailReady(true);
+          }
+          videoEl.pause();
+          revokeUrl();
+        };
+
+        // Try drawing immediately; if canvas is blank (iOS), play briefly
         const canvas = canvasRef.current;
-        if (!canvas) return;
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(videoEl, 0, 0);
-          setThumbnailReady(true);
+        if (canvas) {
+          canvas.width = videoEl.videoWidth;
+          canvas.height = videoEl.videoHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(videoEl, 0, 0);
+            // Check if frame was actually drawn (not blank)
+            const pixel = ctx.getImageData(0, 0, 1, 1).data;
+            if (pixel[0] !== 0 || pixel[1] !== 0 || pixel[2] !== 0) {
+              setThumbnailReady(true);
+              revokeUrl();
+              return;
+            }
+          }
         }
-        if (url) URL.revokeObjectURL(url);
+
+        // Fallback for iOS: play to force decode, then draw
+        videoEl.play().then(() => {
+          requestAnimationFrame(drawFrame);
+        }).catch(() => {
+          drawFrame();
+        });
       };
 
       videoEl.src = url;
+      videoEl.load();
     });
 
     return () => {
-      if (url) URL.revokeObjectURL(url);
+      if (url && !revoked) {
+        URL.revokeObjectURL(url);
+        revoked = true;
+      }
     };
   }, [ejercicio.videoId, ejercicio.startSec]);
 
