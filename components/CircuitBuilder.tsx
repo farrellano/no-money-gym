@@ -20,6 +20,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { db, type CircuitoEjercicio, type EjercicioRecord } from '@/lib/db';
+import { useI18n } from '@/lib/i18n';
 
 interface SortableItemProps {
   id: string;
@@ -29,7 +30,7 @@ interface SortableItemProps {
   onRemove: (ejercicioId: string) => void;
 }
 
-function SortableItem({ id, ejercicio, config, onConfigChange, onRemove }: SortableItemProps) {
+function SortableItem({ id, ejercicio, config, onConfigChange, onRemove, t }: SortableItemProps & { t: Record<string, unknown> }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
@@ -48,7 +49,7 @@ function SortableItem({ id, ejercicio, config, onConfigChange, onRemove }: Sorta
       </div>
       <div className="mt-2 flex gap-3">
         <div className="flex-1">
-          <label className="text-[10px] text-zinc-500">Trabajo (s)</label>
+          <label className="text-[10px] text-zinc-500">{t.builderWorkLabel as string}</label>
           <input
             type="number"
             min={5}
@@ -59,7 +60,7 @@ function SortableItem({ id, ejercicio, config, onConfigChange, onRemove }: Sorta
           />
         </div>
         <div className="flex-1">
-          <label className="text-[10px] text-zinc-500">Descanso (s)</label>
+          <label className="text-[10px] text-zinc-500">{t.builderRestLabel as string}</label>
           <input
             type="number"
             min={0}
@@ -87,6 +88,7 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [ejerciciosConfig, setEjerciciosConfig] = useState<CircuitoEjercicio[]>([]);
   const [showSelector, setShowSelector] = useState(false);
+  const { t } = useI18n();
 
   const allEjercicios = useLiveQuery(() => db.ejercicios.toArray());
 
@@ -163,9 +165,9 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
     return (
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">Seleccionar ejercicios</h2>
+          <h2 className="text-lg font-bold">{t.builderSelectTitle}</h2>
           <button onClick={() => setShowSelector(false)} className="text-sm text-zinc-400">
-            Listo ({selectedIds.length})
+            {t.builderSelectDone} ({selectedIds.length})
           </button>
         </div>
         <div className="space-y-2">
@@ -185,7 +187,7 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
           ))}
           {(!allEjercicios || allEjercicios.length === 0) && (
             <p className="text-center text-sm text-zinc-500 py-8">
-              No hay ejercicios. Crea algunos primero en el banco.
+              {t.builderNoExercises}
             </p>
           )}
         </div>
@@ -196,23 +198,23 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold">{circuitoId ? 'Editar circuito' : 'Nuevo circuito'}</h2>
-        <button onClick={onCancel} className="text-sm text-zinc-400">Cancelar</button>
+        <h2 className="text-lg font-bold">{circuitoId ? t.builderEditTitle : t.builderNewTitle}</h2>
+        <button onClick={onCancel} className="text-sm text-zinc-400">{t.builderCancel}</button>
       </div>
 
       <div>
-        <label className="text-xs text-zinc-500">Nombre del circuito</label>
+        <label className="text-xs text-zinc-500">{t.builderNameLabel}</label>
         <input
           type="text"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          placeholder="Ej: Tabata piernas"
+          placeholder={t.builderNamePlaceholder}
           className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500"
         />
       </div>
 
       <div>
-        <label className="text-xs text-zinc-500">Rondas</label>
+        <label className="text-xs text-zinc-500">{t.builderRoundsLabel}</label>
         <input
           type="number"
           min={1}
@@ -224,7 +226,7 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
       </div>
 
       <div>
-        <label className="text-xs text-zinc-500">Descanso entre rondas (seg)</label>
+        <label className="text-xs text-zinc-500">{t.builderRestBetweenLabel}</label>
         <input
           type="number"
           min={0}
@@ -237,12 +239,12 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
 
       <div>
         <div className="flex items-center justify-between">
-          <label className="text-xs text-zinc-500">Ejercicios ({ejerciciosConfig.length})</label>
+          <label className="text-xs text-zinc-500">{t.builderExercisesLabel} ({ejerciciosConfig.length})</label>
           <button
             onClick={() => setShowSelector(true)}
             className="text-xs text-white underline"
           >
-            + Agregar
+            {t.builderAddExercises}
           </button>
         </div>
 
@@ -264,6 +266,7 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
                       config={config}
                       onConfigChange={handleConfigChange}
                       onRemove={handleRemove}
+                      t={t}
                     />
                   );
                 })}
@@ -278,7 +281,7 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
         disabled={!nombre.trim() || ejerciciosConfig.length === 0}
         className="w-full rounded-lg bg-white px-4 py-3 text-sm font-medium text-zinc-900 disabled:opacity-50 active:bg-zinc-200"
       >
-        Guardar circuito
+        {t.builderSave}
       </button>
     </div>
   );

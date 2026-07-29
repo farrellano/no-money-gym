@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import Link from 'next/link';
 import { db } from '@/lib/db';
+import { useI18n } from '@/lib/i18n';
 import { CircuitBuilder } from '@/components/CircuitBuilder';
 
 export default function CircuitosPage() {
   const [showBuilder, setShowBuilder] = useState(false);
   const [editingId, setEditingId] = useState<string | undefined>();
+  const { t } = useI18n();
 
   const circuitos = useLiveQuery(() =>
     db.circuitos.orderBy('createdAt').reverse().toArray()
@@ -37,12 +39,12 @@ export default function CircuitosPage() {
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Circuitos</h1>
+        <h1 className="text-2xl font-bold">{t.circuitsTitle}</h1>
         <button
           onClick={() => setShowBuilder(true)}
           className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 active:bg-zinc-200"
         >
-          + Nuevo
+          {t.circuitsNew}
         </button>
       </div>
 
@@ -61,14 +63,14 @@ export default function CircuitosPage() {
                 <div>
                   <h3 className="font-medium text-white">{c.nombre}</h3>
                   <p className="text-xs text-zinc-400">
-                    {c.ejercicios.length} ejercicios · {c.rondas} rondas · {durationMin} min
+                    {c.ejercicios.length} {t.circuitsExercises} · {c.rondas} {t.circuitsRounds} · {durationMin} min
                   </p>
                 </div>
                 <Link
                   href={`/circuitos/${c.id}/play`}
                   className="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white active:bg-green-700"
                 >
-                  ▶ Iniciar
+                  {t.circuitsStart}
                 </Link>
               </div>
               <div className="mt-3 flex gap-2">
@@ -79,13 +81,13 @@ export default function CircuitosPage() {
                   }}
                   className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-300 active:bg-zinc-800"
                 >
-                  Editar
+                  {t.circuitsEdit}
                 </button>
                 <button
                   onClick={() => handleDelete(c.id)}
                   className="rounded-md border border-red-900 px-3 py-1 text-xs text-red-400 active:bg-red-950"
                 >
-                  Eliminar
+                  {t.circuitsDelete}
                 </button>
               </div>
             </div>
@@ -95,8 +97,8 @@ export default function CircuitosPage() {
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
           <span className="text-4xl">🔄</span>
-          <p className="mt-2 text-sm">No hay circuitos aún</p>
-          <p className="text-xs">Crea ejercicios primero, luego arma circuitos</p>
+          <p className="mt-2 text-sm">{t.circuitsEmpty}</p>
+          <p className="text-xs">{t.circuitsEmptyHint}</p>
         </div>
       )}
     </div>

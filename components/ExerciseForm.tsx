@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { db, type EjercicioRecord } from '@/lib/db';
+import { useI18n } from '@/lib/i18n';
 import { VideoTrimmer } from './VideoTrimmer';
 import { StorageModal } from './StorageModal';
 
@@ -32,6 +33,7 @@ export function ExerciseForm({ ejercicio, onSaved, onCancel }: ExerciseFormProps
   const [endSec, setEndSec] = useState(ejercicio?.endSec ?? 0);
   const [saving, setSaving] = useState(false);
   const [storageError, setStorageError] = useState(false);
+  const { t } = useI18n();
 
   // Load existing video URL for edit mode
   useEffect(() => {
@@ -119,17 +121,17 @@ export function ExerciseForm({ ejercicio, onSaved, onCancel }: ExerciseFormProps
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold">
-          {ejercicio ? 'Editar ejercicio' : 'Nuevo ejercicio'}
+          {ejercicio ? t.exerciseEditTitle : t.exerciseNewTitle}
         </h2>
         <button onClick={onCancel} className="text-sm text-zinc-400">
-          Cancelar
+          {t.exerciseCancel}
         </button>
       </div>
 
       {!videoUrl && (
         <label className="flex h-40 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-zinc-700 text-zinc-400 active:border-zinc-500">
           <span className="text-3xl">📹</span>
-          <span className="mt-1 text-sm">Seleccionar video</span>
+          <span className="mt-1 text-sm">{t.exerciseSelectVideo}</span>
           <input
             type="file"
             accept="video/*"
@@ -154,18 +156,18 @@ export function ExerciseForm({ ejercicio, onSaved, onCancel }: ExerciseFormProps
 
       <div className="space-y-3">
         <div>
-          <label className="text-xs text-zinc-500">Nombre del ejercicio</label>
+          <label className="text-xs text-zinc-500">{t.exerciseNameLabel}</label>
           <input
             type="text"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            placeholder="Ej: Sentadillas con salto"
+            placeholder={t.exerciseNamePlaceholder}
             className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500"
           />
         </div>
 
         <div>
-          <label className="text-xs text-zinc-500">Grupo muscular</label>
+          <label className="text-xs text-zinc-500">{t.exerciseGroupLabel}</label>
           <select
             value={grupoMuscular}
             onChange={(e) => setGrupoMuscular(e.target.value)}
@@ -185,7 +187,7 @@ export function ExerciseForm({ ejercicio, onSaved, onCancel }: ExerciseFormProps
         disabled={saving || !nombre.trim() || (!videoFile && !ejercicio?.videoId)}
         className="w-full rounded-lg bg-white px-4 py-3 text-sm font-medium text-zinc-900 disabled:opacity-50 active:bg-zinc-200"
       >
-        {saving ? 'Guardando...' : 'Guardar ejercicio'}
+        {saving ? t.exerciseSaving : t.exerciseSave}
       </button>
 
       <StorageModal open={storageError} onClose={() => setStorageError(false)} />

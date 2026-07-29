@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db, type ConfigRecord } from '@/lib/db';
+import { useI18n } from '@/lib/i18n';
 import { getStorageEstimate, formatBytes, requestPersistentStorage } from '@/lib/storage';
 
 export default function AjustesPage() {
@@ -14,6 +15,7 @@ export default function AjustesPage() {
   const [storageUsage, setStorageUsage] = useState('');
   const [storageQuota, setStorageQuota] = useState('');
   const [persistent, setPersistent] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     // Load config
@@ -127,14 +129,14 @@ export default function AjustesPage() {
 
   return (
     <div className="p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Ajustes</h1>
+      <h1 className="text-2xl font-bold">{t.settingsTitle}</h1>
 
       {/* Audio settings */}
       <section className="space-y-3">
-        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">Audio</h2>
+        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">{t.settingsAudioSection}</h2>
 
         <label className="flex items-center justify-between">
-          <span className="text-sm text-white">Voz (indicaciones habladas)</span>
+          <span className="text-sm text-white">{t.settingsVoice}</span>
           <input
             type="checkbox"
             checked={config.vozActivada}
@@ -144,7 +146,7 @@ export default function AjustesPage() {
         </label>
 
         <label className="flex items-center justify-between">
-          <span className="text-sm text-white">Sonidos (beeps)</span>
+          <span className="text-sm text-white">{t.settingsSounds}</span>
           <input
             type="checkbox"
             checked={config.sonidosActivados}
@@ -156,21 +158,21 @@ export default function AjustesPage() {
 
       {/* Storage */}
       <section className="space-y-3">
-        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">Almacenamiento</h2>
+        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">{t.settingsStorageSection}</h2>
 
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
           <p className="text-sm text-white">
-            Usado: <span className="font-mono">{storageUsage}</span> / {storageQuota}
+            {t.settingsUsed}: <span className="font-mono">{storageUsage}</span> / {storageQuota}
           </p>
           <p className="mt-1 text-xs text-zinc-400">
-            {persistent ? '✓ Almacenamiento persistente activo' : 'Almacenamiento temporal'}
+            {persistent ? t.settingsPersistentActive : t.settingsTemporary}
           </p>
           {!persistent && (
             <button
               onClick={handleRequestPersistence}
               className="mt-2 rounded-md border border-zinc-700 px-3 py-1 text-xs text-white active:bg-zinc-800"
             >
-              Solicitar persistencia
+              {t.settingsRequestPersistence}
             </button>
           )}
         </div>
@@ -178,17 +180,17 @@ export default function AjustesPage() {
 
       {/* Backup */}
       <section className="space-y-3">
-        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">Respaldo</h2>
+        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">{t.settingsBackupSection}</h2>
 
         <button
           onClick={handleExport}
           className="w-full rounded-lg border border-zinc-700 px-4 py-2.5 text-sm text-white active:bg-zinc-800"
         >
-          📦 Exportar respaldo (.zip)
+          {t.settingsExport}
         </button>
 
         <label className="block w-full cursor-pointer rounded-lg border border-zinc-700 px-4 py-2.5 text-center text-sm text-white active:bg-zinc-800">
-          📥 Importar respaldo
+          {t.settingsImport}
           <input
             type="file"
             accept=".zip"
