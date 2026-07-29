@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 
-// Reemplazar con dirección real
-const BTC_ADDRESS = 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh';
+const BTC_ADDRESS = process.env.NEXT_PUBLIC_BTC_ADDRESS ?? '';
 
 export function Footer() {
   const [copied, setCopied] = useState(false);
@@ -18,6 +17,7 @@ export function Footer() {
     <footer className="border-t border-zinc-800 px-4 py-8 text-center">
       <p className="text-sm text-zinc-400">Developed by Fas and Claude</p>
 
+      {BTC_ADDRESS && (
       <div className="mt-4 text-xs text-zinc-600">
         <p>Si quieres aportar, puedes dejar unos satoshis en esta dirección BTC</p>
         <div className="mt-2 flex items-center justify-center gap-2">
@@ -32,6 +32,7 @@ export function Footer() {
           </button>
         </div>
       </div>
+      )
     </footer>
   );
 }
