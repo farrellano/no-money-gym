@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 const geistSans = Geist({
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="es" className={`${geistSans.variable} h-full`}>
       <body className="min-h-full bg-zinc-950 text-white font-sans">
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
