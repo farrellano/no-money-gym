@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { type CircuitoEjercicio } from '@/lib/db';
 import { playBeep, playCountdownBeep, speak } from '@/lib/audio';
 
-export type TimerPhase = 'work' | 'rest' | 'finished';
+export type TimerPhase = 'work' | 'rest' | 'round-rest' | 'finished';
 
 export interface TimerState {
   phase: TimerPhase;
@@ -18,6 +18,7 @@ export interface TimerState {
 interface UseCircuitTimerOptions {
   ejercicios: CircuitoEjercicio[];
   rondas: number;
+  descansoEntreRondas: number;
   vozActivada: boolean;
   sonidosActivados: boolean;
   onFinished: () => void;
@@ -26,6 +27,7 @@ interface UseCircuitTimerOptions {
 export function useCircuitTimer({
   ejercicios,
   rondas,
+  descansoEntreRondas,
   vozActivada,
   sonidosActivados,
   onFinished,
@@ -63,20 +65,32 @@ export function useCircuitTimer({
         const nextRound = s.currentRound + 1;
         if (nextRound > rondas) {
           // Circuit complete
-          if (vozActivada) speak('Circuito completado');
+          if (vozActivada) speak('Circuito terminado');
           setState((prev) => ({ ...prev, phase: 'finished', isRunning: false, secondsLeft: 0 }));
           if (intervalRef.current) clearInterval(intervalRef.current);
           onFinished();
           return;
         }
-        // Start next round from first exercise
-        setState((prev) => ({
-          ...prev,
-          phase: 'work',
-          currentExerciseIndex: 0,
-          currentRound: nextRound,
-          secondsLeft: ejercicios[0].duracionSeg,
-        }));
+        // Rest between rounds before starting next round
+        if (descansoEntreRondas > 0) {
+          if (vozActivada) speak('Descanso entre rondas');
+          setState((prev) => ({
+            ...prev,
+            phase: 'round-rest',
+            secondsLeft: descansoEntreRondas,
+            currentRound: nextRound,
+            currentExerciseIndex: 0,
+          }));
+        } else {
+          // No round rest, start next round immediately
+          setState((prev) => ({
+            ...prev,
+            phase: 'work',
+            currentExerciseIndex: 0,
+            currentRound: nextRound,
+            secondsLeft: ejercicios[0].duracionSeg,
+          }));
+        }
       } else {
         setState((prev) => ({
           ...prev,
@@ -86,7 +100,7 @@ export function useCircuitTimer({
         }));
       }
     },
-    [ejercicios, rondas, vozActivada, onFinished]
+    [ejercicios, rondas, descansoEntreRondas, vozActivada, onFinished]
   );
 
   const tick = useCallback(() => {
@@ -99,7 +113,7 @@ export function useCircuitTimer({
     }
 
     // Prepare announcement at 3s remaining in rest
-    if (s.phase === 'rest' && newSeconds === 3 && vozActivada) {
+    if ((s.phase === 'rest' || s.phase === 'round-rest') && newSeconds === 3 && vozActivada) {
       speak('Prepárate');
     }
 
@@ -107,7 +121,13 @@ export function useCircuitTimer({
       // Transition to next phase
       if (s.phase === 'work') {
         const currentEj = ejercicios[s.currentExerciseIndex];
-        if (currentEj.descansoSeg > 0) {
+        const isLastExerciseLastRound =
+          s.currentExerciseIndex === ejercicios.length - 1 && s.currentRound === rondas;
+
+        if (isLastExerciseLastRound) {
+          // Circuit complete — no rest needed
+          advanceExercise(s);
+        } else if (currentEj.descansoSeg > 0) {
           if (vozActivada) speak('Descanso');
           setState((prev) => ({ ...prev, phase: 'rest', secondsLeft: currentEj.descansoSeg }));
         } else {
@@ -116,11 +136,18 @@ export function useCircuitTimer({
         }
       } else if (s.phase === 'rest') {
         advanceExercise(s);
+      } else if (s.phase === 'round-rest') {
+        // Round rest finished, start first exercise of this round
+        setState((prev) => ({
+          ...prev,
+          phase: 'work',
+          secondsLeft: ejercicios[0].duracionSeg,
+        }));
       }
     } else {
       setState((prev) => ({ ...prev, secondsLeft: newSeconds }));
     }
-  }, [ejercicios, vozActivada, sonidosActivados, advanceExercise]);
+  }, [ejercicios, rondas, vozActivada, sonidosActivados, advanceExercise]);
 
   const start = useCallback(() => {
     setState((prev) => ({ ...prev, isRunning: true }));

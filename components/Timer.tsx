@@ -15,12 +15,14 @@ export function Timer({ secondsLeft, phase }: TimerProps) {
   const phaseColors: Record<TimerPhase, string> = {
     work: 'text-green-400',
     rest: 'text-yellow-400',
+    'round-rest': 'text-orange-400',
     finished: 'text-white',
   };
 
   const phaseLabels: Record<TimerPhase, string> = {
     work: 'TRABAJO',
     rest: 'DESCANSO',
+    'round-rest': 'DESCANSO ENTRE RONDAS',
     finished: 'COMPLETADO',
   };
 

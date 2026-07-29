@@ -48,13 +48,20 @@ export default function CircuitosPage() {
 
       {circuitos && circuitos.length > 0 ? (
         <div className="space-y-3">
-          {circuitos.map((c) => (
+          {circuitos.map((c) => {
+            const totalSec = c.ejercicios.reduce(
+              (acc, e) => acc + e.duracionSeg + e.descansoSeg,
+              0
+            ) * c.rondas + (c.descansoEntreRondas ?? 0) * (c.rondas - 1);
+            const durationMin = Math.ceil(totalSec / 60);
+
+            return (
             <div key={c.id} className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium text-white">{c.nombre}</h3>
                   <p className="text-xs text-zinc-400">
-                    {c.ejercicios.length} ejercicios · {c.rondas} rondas
+                    {c.ejercicios.length} ejercicios · {c.rondas} rondas · {durationMin} min
                   </p>
                 </div>
                 <Link
@@ -82,7 +89,8 @@ export default function CircuitosPage() {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-zinc-500">

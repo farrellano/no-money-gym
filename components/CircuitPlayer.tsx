@@ -23,6 +23,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
   const { state, start, pause, reset, announceExercise } = useCircuitTimer({
     ejercicios: circuito.ejercicios,
     rondas: circuito.rondas,
+    descansoEntreRondas: circuito.descansoEntreRondas ?? 30,
     vozActivada: config.vozActivada,
     sonidosActivados: config.sonidosActivados,
     onFinished: () => {
@@ -50,19 +51,35 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
     };
   }, [currentEjercicio?.videoId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Loop video between startSec and endSec
+  // Play video: first from beginning, then loop trimmed section
+  const hasPlayedIntroRef = useRef(false);
+
+  useEffect(() => {
+    // Reset intro flag when exercise changes
+    hasPlayedIntroRef.current = false;
+  }, [currentEjercicio?.videoId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !currentEjercicio) return;
 
     const handleTimeUpdate = () => {
-      if (video.currentTime >= currentEjercicio.endSec) {
-        video.currentTime = currentEjercicio.startSec;
+      if (!hasPlayedIntroRef.current) {
+        // Playing intro (from 0 to startSec)
+        if (video.currentTime >= currentEjercicio.startSec) {
+          hasPlayedIntroRef.current = true;
+          // Now loop the trimmed section
+        }
+      } else {
+        // Loop the trimmed section
+        if (video.currentTime >= currentEjercicio.endSec) {
+          video.currentTime = currentEjercicio.startSec;
+        }
       }
     };
 
     const handleLoadedData = () => {
-      video.currentTime = currentEjercicio.startSec;
+      video.currentTime = 0; // Start from the very beginning
       if (state.isRunning && state.phase === 'work') {
         video.play();
       }

@@ -83,6 +83,7 @@ interface CircuitBuilderProps {
 export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilderProps) {
   const [nombre, setNombre] = useState('');
   const [rondas, setRondas] = useState(3);
+  const [descansoEntreRondas, setDescansoEntreRondas] = useState(30);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [ejerciciosConfig, setEjerciciosConfig] = useState<CircuitoEjercicio[]>([]);
   const [showSelector, setShowSelector] = useState(false);
@@ -96,6 +97,7 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
         if (c) {
           setNombre(c.nombre);
           setRondas(c.rondas);
+          setDescansoEntreRondas(c.descansoEntreRondas ?? 30);
           setEjerciciosConfig(c.ejercicios);
           setSelectedIds(c.ejercicios.map((e) => e.ejercicioId));
         }
@@ -147,6 +149,7 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
       id: circuitoId ?? crypto.randomUUID(),
       nombre: nombre.trim(),
       rondas,
+      descansoEntreRondas,
       ejercicios: ejerciciosConfig,
       createdAt: new Date(),
     });
@@ -216,6 +219,18 @@ export function CircuitBuilder({ circuitoId, onSaved, onCancel }: CircuitBuilder
           max={20}
           value={rondas}
           onChange={(e) => setRondas(parseInt(e.target.value) || 1)}
+          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
+        />
+      </div>
+
+      <div>
+        <label className="text-xs text-zinc-500">Descanso entre rondas (seg)</label>
+        <input
+          type="number"
+          min={0}
+          max={300}
+          value={descansoEntreRondas}
+          onChange={(e) => setDescansoEntreRondas(parseInt(e.target.value) || 0)}
           className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white"
         />
       </div>

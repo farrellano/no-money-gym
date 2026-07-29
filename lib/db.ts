@@ -27,6 +27,7 @@ export interface CircuitoRecord {
   id: string;
   nombre: string;
   rondas: number;
+  descansoEntreRondas: number;
   ejercicios: CircuitoEjercicio[];
   createdAt: Date;
 }
