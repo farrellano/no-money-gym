@@ -26,14 +26,6 @@ export const translations = {
         answer: 'No. Sin cobros recurrentes de ningún tipo.',
       },
       {
-        question: '¿Necesito internet para usarla?',
-        answer: 'Solo para la primera carga. Después funciona offline como app instalada.',
-      },
-      {
-        question: '¿Qué pasa si cambio de celular?',
-        answer: 'Puedes exportar un respaldo (.zip) desde Ajustes e importarlo en el nuevo dispositivo.',
-      },
-      {
         question: '¿De dónde saco los videos de los ejercicios?',
         answer: 'Los grabas tú o los descargas de donde prefieras y los subes desde tu dispositivo. No hay integración directa con redes sociales.',
       },
@@ -179,14 +171,6 @@ export const translations = {
       {
         question: 'Are there subscriptions?',
         answer: 'No. No recurring charges of any kind.',
-      },
-      {
-        question: 'Do I need internet to use it?',
-        answer: 'Only for the first load. After that it works offline as an installed app.',
-      },
-      {
-        question: 'What if I change my phone?',
-        answer: 'You can export a backup (.zip) from Settings and import it on the new device.',
       },
       {
         question: 'Where do I get the exercise videos?',

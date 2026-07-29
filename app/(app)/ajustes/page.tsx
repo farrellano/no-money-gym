@@ -46,87 +46,6 @@ export default function AjustesPage() {
     setPersistent(granted);
   };
 
-  const handleExport = async () => {
-    const JSZip = (await import('jszip')).default;
-    const zip = new JSZip();
-
-    const ejercicios = await db.ejercicios.toArray();
-    const circuitos = await db.circuitos.toArray();
-    const videos = await db.videos.toArray();
-
-    zip.file('ejercicios.json', JSON.stringify(ejercicios));
-    zip.file('circuitos.json', JSON.stringify(circuitos));
-
-    const videosFolder = zip.folder('videos')!;
-    for (const video of videos) {
-      videosFolder.file(`${video.id}.blob`, video.blob);
-      videosFolder.file(`${video.id}.json`, JSON.stringify({
-        id: video.id,
-        duracionTotal: video.duracionTotal,
-        createdAt: video.createdAt,
-      }));
-    }
-
-    const blob = await zip.generateAsync({ type: 'blob' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `no-money-gym-backup-${new Date().toISOString().slice(0, 10)}.zip`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const JSZip = (await import('jszip')).default;
-    const zip = await JSZip.loadAsync(file);
-
-    // Import exercises
-    const ejerciciosJson = await zip.file('ejercicios.json')?.async('string');
-    if (ejerciciosJson) {
-      const ejercicios = JSON.parse(ejerciciosJson);
-      await db.ejercicios.bulkPut(ejercicios);
-    }
-
-    // Import circuits
-    const circuitosJson = await zip.file('circuitos.json')?.async('string');
-    if (circuitosJson) {
-      const circuitos = JSON.parse(circuitosJson);
-      await db.circuitos.bulkPut(circuitos);
-    }
-
-    // Import videos
-    const videosFolder = zip.folder('videos');
-    if (videosFolder) {
-      const metaFiles = Object.keys(zip.files).filter(
-        (name) => name.startsWith('videos/') && name.endsWith('.json')
-      );
-
-      for (const metaPath of metaFiles) {
-        const metaJson = await zip.file(metaPath)?.async('string');
-        if (!metaJson) continue;
-        const meta = JSON.parse(metaJson);
-        const blobFile = zip.file(`videos/${meta.id}.blob`);
-        if (!blobFile) continue;
-        const blob = await blobFile.async('blob');
-
-        await db.videos.put({
-          id: meta.id,
-          blob,
-          duracionTotal: meta.duracionTotal,
-          createdAt: new Date(meta.createdAt),
-        });
-      }
-    }
-
-    // Refresh storage display
-    const est = await getStorageEstimate();
-    setStorageUsage(formatBytes(est.usage));
-    setStorageQuota(formatBytes(est.quota));
-  };
-
   return (
     <div className="p-4 space-y-6">
       <h1 className="text-2xl font-bold">{t.settingsTitle}</h1>
@@ -176,28 +95,6 @@ export default function AjustesPage() {
             </button>
           )}
         </div>
-      </section>
-
-      {/* Backup */}
-      <section className="space-y-3">
-        <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wide">{t.settingsBackupSection}</h2>
-
-        <button
-          onClick={handleExport}
-          className="w-full rounded-lg border border-zinc-700 px-4 py-2.5 text-sm text-white active:bg-zinc-800"
-        >
-          {t.settingsExport}
-        </button>
-
-        <label className="block w-full cursor-pointer rounded-lg border border-zinc-700 px-4 py-2.5 text-center text-sm text-white active:bg-zinc-800">
-          {t.settingsImport}
-          <input
-            type="file"
-            accept=".zip"
-            className="hidden"
-            onChange={handleImport}
-          />
-        </label>
       </section>
     </div>
   );
