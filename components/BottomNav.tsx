@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-const tabs = [
-  { href: '/banco-ejercicios', label: 'Ejercicios', icon: '💪' },
-  { href: '/circuitos', label: 'Circuitos', icon: '🔄' },
-  { href: '/ajustes', label: 'Ajustes', icon: '⚙️' },
-];
+import { useI18n } from '@/lib/i18n';
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { t } = useI18n();
+
+  const tabs = [
+    { href: '/banco-ejercicios', label: t.navExercises, icon: '💪' },
+    { href: '/circuitos', label: t.navCircuits, icon: '🔄' },
+    { href: '/ajustes', label: t.navSettings, icon: '⚙️' },
+  ];
 
   // Hide nav during playback
   if (pathname.endsWith('/play')) return null;

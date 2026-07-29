@@ -95,6 +95,11 @@ export const translations = {
     speechPrepare: 'Prepárate',
     speechFinished: 'Circuito terminado',
     speechLang: 'es-ES',
+
+    // BottomNav
+    navExercises: 'Ejercicios',
+    navCircuits: 'Circuitos',
+    navSettings: 'Ajustes',
   },
   en: {
     // Header
@@ -191,6 +196,11 @@ export const translations = {
     speechPrepare: 'Get ready',
     speechFinished: 'Circuit completed',
     speechLang: 'en-US',
+
+    // BottomNav
+    navExercises: 'Exercises',
+    navCircuits: 'Circuits',
+    navSettings: 'Settings',
   },
 };
 
