@@ -15,6 +15,9 @@ export function Header() {
         </div>
 
         <nav className="flex items-center gap-4">
+          <a href="/blog" className="text-sm text-zinc-400 hover:text-white transition-colors">
+            Blog
+          </a>
           <a href="#faq" className="text-sm text-zinc-400 hover:text-white transition-colors">
             {t.navFaq}
           </a>
