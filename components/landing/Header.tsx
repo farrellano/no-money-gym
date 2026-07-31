@@ -11,17 +11,17 @@ export function Header() {
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
           <Image src="/logonomoneygym.png" alt="NoMoneyGym" width={32} height={32} className="rounded-md" />
-          <span className="text-lg font-bold text-white">{t.appName}</span>
+          <span className="hidden sm:inline text-lg font-bold text-white">{t.appName}</span>
         </div>
 
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-2 sm:gap-4">
           <a href="/blog" className="text-sm text-zinc-400 hover:text-white transition-colors">
             Blog
           </a>
           <a href="#faq" className="text-sm text-zinc-400 hover:text-white transition-colors">
             {t.navFaq}
           </a>
-          <a href="#feedback" className="text-sm text-zinc-400 hover:text-white transition-colors">
+          <a href="#feedback" className="hidden sm:inline text-sm text-zinc-400 hover:text-white transition-colors">
             {t.navFeedback}
           </a>
           <select
