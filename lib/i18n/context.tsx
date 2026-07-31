@@ -16,6 +16,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('locale');
       if (saved === 'en' || saved === 'es') return saved;
+      // Detect browser language
+      const browserLang = navigator.language?.slice(0, 2);
+      return browserLang === 'en' ? 'en' : 'es';
     }
     return 'es';
   });
