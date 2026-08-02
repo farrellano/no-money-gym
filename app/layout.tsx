@@ -11,11 +11,42 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'NoMoneyGym — Free Workout Routines with Your Own Videos',
-  description: 'Create custom Tabata and circuit training routines using your own exercise videos. Free, offline, no subscriptions.',
+  title: 'NoMoneyGym — Free Workout Routines with Your Videos',
+  description: 'Create custom Tabata and circuit training routines using your own exercise videos. 100% free, offline, no subscriptions.',
+  metadataBase: new URL('https://www.nomoneygym.com'),
+  alternates: {
+    canonical: '/',
+  },
   icons: {
-    icon: '/icon.png',
+    icon: [
+      { url: '/icon.png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
     apple: '/logonomoneygym.png',
+  },
+  openGraph: {
+    title: 'NoMoneyGym — Build Custom Workout Routines with Your Videos',
+    description: 'Create Tabata & circuit routines using your own exercise videos. Free, offline, no cloud.',
+    url: 'https://www.nomoneygym.com',
+    siteName: 'NoMoneyGym',
+    locale: 'es_LA',
+    alternateLocale: 'en_US',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'NoMoneyGym — Create free workout routines with your own exercise videos',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NoMoneyGym — Free Workout Routines with Your Videos',
+    description: 'Build Tabata & circuit routines using your exercise videos. 100% free, offline, no subscriptions.',
+    images: ['/og-image.png'],
+    site: '@nomoneygym',
   },
 };
 
