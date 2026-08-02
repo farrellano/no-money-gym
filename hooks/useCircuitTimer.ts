@@ -131,11 +131,10 @@ export function useCircuitTimer({
       // Transition to next phase
       if (s.phase === 'work') {
         const currentEj = ejercicios[s.currentExerciseIndex];
-        const isLastExerciseLastRound =
-          s.currentExerciseIndex === ejercicios.length - 1 && s.currentRound === rondas;
+        const isLastExerciseOfRound = s.currentExerciseIndex === ejercicios.length - 1;
 
-        if (isLastExerciseLastRound) {
-          // Circuit complete — no rest needed
+        if (isLastExerciseOfRound) {
+          // End of round — skip exercise rest, go to round-rest or finish
           advanceExercise(s);
         } else if (currentEj.descansoSeg > 0) {
           if (vozActivada) speak(speechTexts.rest, speechLang);
