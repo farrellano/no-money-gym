@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'NoMoneyGym — Create free workout routines with your own exercise videos',
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'NoMoneyGym — Free Workout Routines with Your Videos',
     description: 'Build Tabata & circuit routines using your exercise videos. 100% free, offline, no subscriptions.',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpg'],
     site: '@nomoneygym',
   },
 };
