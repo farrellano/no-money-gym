@@ -19,7 +19,7 @@ export async function GET(
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  const exerciseIds = circuit.exercises.map((exercise) => exercise.exerciseId);
+  const exerciseIds = circuit.exercises.map((exercise: { exerciseId: string }) => exercise.exerciseId);
   const exerciseDetails = exerciseIds.length
     ? await prisma.$queryRawUnsafe<
         Array<{
@@ -43,7 +43,7 @@ export async function GET(
     restBetweenRounds: circuit.restBetweenRounds,
     createdBy: circuit.user.username,
     shareSlug: circuit.shareSlug,
-    exercises: circuit.exercises.map((exercise) => {
+    exercises: circuit.exercises.map((exercise: { exerciseId: string; durationSec: number; restSec: number; order: number }) => {
       const details = detailsMap.get(exercise.exerciseId);
 
       return {
