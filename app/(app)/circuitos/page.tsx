@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import Link from 'next/link';
 import { db } from '@/lib/db';
@@ -10,11 +10,33 @@ import { CircuitBuilder } from '@/components/CircuitBuilder';
 export default function CircuitosPage() {
   const [showBuilder, setShowBuilder] = useState(false);
   const [editingId, setEditingId] = useState<string | undefined>();
+  const [aiCircuits, setAiCircuits] = useState<
+    Array<{
+      id: string;
+      name: string;
+      rounds: number;
+      restBetweenRounds: number;
+      shareSlug: string;
+      exercises: Array<{ durationSec: number; restSec: number }>;
+    }>
+  >([]);
   const { t } = useI18n();
 
   const circuitos = useLiveQuery(() =>
     db.circuitos.orderBy('createdAt').reverse().toArray()
   );
+
+  useEffect(() => {
+    const userId = localStorage.getItem('nmg-user-id');
+    if (!userId) return;
+
+    fetch('/api/circuits/user', {
+      headers: { 'x-user-id': userId },
+    })
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setAiCircuits)
+      .catch(() => {});
+  }, []);
 
   const handleDelete = async (id: string) => {
     await db.circuitos.delete(id);
@@ -99,6 +121,49 @@ export default function CircuitosPage() {
           <span className="text-4xl">🔄</span>
           <p className="mt-2 text-sm">{t.circuitsEmpty}</p>
           <p className="text-xs">{t.circuitsEmptyHint}</p>
+        </div>
+      )}
+
+      {aiCircuits.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-medium text-zinc-400">🤖 Circuitos AI</h2>
+          {aiCircuits.map((c) => {
+            const totalSec =
+              c.exercises.reduce((acc, e) => acc + e.durationSec + e.restSec, 0) *
+              c.rounds;
+            const durationMin = Math.ceil(totalSec / 60);
+
+            return (
+              <div key={c.id} className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium text-white">🤖 {c.name}</h3>
+                    <p className="text-xs text-zinc-400">
+                      {c.exercises.length} ejercicios · {c.rounds} rondas · {durationMin} min
+                    </p>
+                  </div>
+                  <Link
+                    href={`/circuitos/shared/${c.shareSlug}`}
+                    className="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white active:bg-green-700"
+                  >
+                    ▶️
+                  </Link>
+                </div>
+                <div className="mt-3">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        `${window.location.origin}/circuitos/shared/${c.shareSlug}`
+                      );
+                    }}
+                    className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-300 active:bg-zinc-800"
+                  >
+                    🔗 Compartir
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
