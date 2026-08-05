@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
   try {
     const result = streamText({
-      model: groq('llama-3.3-70b-versatile'),
+      model: groq('moonshotai/kimi-k2-instruct-0905'),
       system: AI_COACH_SYSTEM_PROMPT,
       messages: await convertToModelMessages(uiMessages, { tools }),
       tools,
@@ -44,7 +44,6 @@ export async function POST(req: Request) {
       providerOptions: {
         groq: {
           parallelToolCalls: false,
-          structuredOutputs: false,
         } satisfies GroqLanguageModelChatOptions,
       },
       onError: (event) => {
