@@ -34,7 +34,8 @@ export async function GET(
       )
     : [];
 
-  const detailsMap = new Map(exerciseDetails.map((exercise: { id: string; name: string; gif_url: string; body_part: string }) => [exercise.id, exercise]));
+  type ExerciseDetail = { id: string; name: string; gif_url: string; body_part: string };
+  const detailsMap = new Map<string, ExerciseDetail>(exerciseDetails.map((exercise: ExerciseDetail) => [exercise.id, exercise]));
 
   return NextResponse.json({
     id: circuit.id,
