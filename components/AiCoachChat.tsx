@@ -4,8 +4,16 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useState, useSyncExternalStore, useRef, useEffect, useMemo } from 'react';
 import { RegisterModal } from './RegisterModal';
+import { ExercisePicker } from './ExercisePicker';
 
 const subscribe = () => () => {};
+
+interface ToolPart {
+  type: string;
+  toolName?: string;
+  state?: string;
+  output?: unknown;
+}
 
 export function AiCoachChat() {
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
@@ -54,6 +62,20 @@ export function AiCoachChat() {
     sendMessage({ text });
   };
 
+  const handleCircuitConfirm = (config: {
+    exercises: Array<{ exerciseId: string; name: string; durationSec: number; restSec: number }>;
+    rounds: number;
+    restBetweenRounds: number;
+  }) => {
+    const exerciseList = config.exercises
+      .map((e, i) => `${i + 1}. ${e.name} (${e.durationSec}s trabajo, ${e.restSec}s descanso)`)
+      .join('\n');
+
+    sendMessage({
+      text: `Guarda este circuito con la siguiente configuración:\n\nEjercicios:\n${exerciseList}\n\nRondas: ${config.rounds}\nDescanso entre rondas: ${config.restBetweenRounds}s\n\nIDs de ejercicios: ${config.exercises.map(e => e.exerciseId).join(', ')}`,
+    });
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col">
       <div className="border-b border-zinc-800 px-4 py-3">
@@ -72,27 +94,80 @@ export function AiCoachChat() {
           </div>
         )}
 
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[85%] rounded-xl px-4 py-2 text-sm ${
-                message.role === 'user'
-                  ? 'bg-white text-zinc-900'
-                  : 'bg-zinc-800 text-zinc-100'
-              }`}
-            >
-              <p className="whitespace-pre-wrap">
-                {message.parts
-                  .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
-                  .map(p => p.text)
-                  .join('')}
-              </p>
+        {messages.map((message) => {
+          const textContent = message.parts
+            .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+            .map((p) => p.text)
+            .join('');
+
+          // Find tool results for searchExercises
+          const searchResults = message.parts
+            .filter((p) => {
+              const part = p as ToolPart;
+              return (
+                (part.type === 'dynamic-tool' || part.type?.startsWith('tool-')) &&
+                part.toolName === 'searchExercises' &&
+                part.state === 'result' &&
+                Array.isArray(part.output)
+              );
+            })
+            .flatMap((p) => (p as ToolPart).output as Array<{
+              id: string;
+              name: string;
+              bodyPart: string;
+              equipment: string;
+              target: string;
+              gifUrl: string;
+            }>);
+
+          // Find createCircuit results
+          const createResult = message.parts.find((p) => {
+            const part = p as ToolPart;
+            return (
+              (part.type === 'dynamic-tool' || part.type?.startsWith('tool-')) &&
+              part.toolName === 'createCircuit' &&
+              part.state === 'result' &&
+              (part.output as { success?: boolean })?.success === true
+            );
+          });
+
+          return (
+            <div key={message.id} className="space-y-3">
+              {/* Text content */}
+              {textContent && (
+                <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-[85%] rounded-xl px-4 py-2 text-sm ${
+                      message.role === 'user'
+                        ? 'bg-white text-zinc-900'
+                        : 'bg-zinc-800 text-zinc-100'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{textContent}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Interactive exercise picker */}
+              {searchResults.length > 0 && message.role === 'assistant' && (
+                <ExercisePicker
+                  exercises={searchResults}
+                  onConfirm={handleCircuitConfirm}
+                />
+              )}
+
+              {/* Circuit created success */}
+              {createResult && (
+                <div className="rounded-xl border border-green-800 bg-green-950/30 p-4">
+                  <p className="text-sm font-medium text-green-400">✅ ¡Circuito creado!</p>
+                  <p className="mt-1 text-xs text-zinc-400">
+                    Puedes verlo en la pestaña de Circuitos
+                  </p>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {status === 'streaming' && (
           <div className="flex justify-start">

@@ -102,6 +102,7 @@ export function createAiCoachTools(userId: string) {
           bodyPart: result.body_part,
           equipment: result.equipment,
           target: result.target,
+          gifUrl: result.gif_url,
         }));
       },
     }),
