@@ -82,21 +82,21 @@ export function createAiCoachTools(userId: string) {
         const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
         params.push(limit);
 
-        const results = await prisma.$queryRawUnsafe<
-          Array<{
-            id: string;
-            name: string;
-            body_part: string;
-            equipment: string;
-            target: string;
-            gif_url: string;
-          }>
-        >(
+        type ExerciseRow = {
+          id: string;
+          name: string;
+          body_part: string;
+          equipment: string;
+          target: string;
+          gif_url: string;
+        };
+
+        const results: ExerciseRow[] = await prisma.$queryRawUnsafe(
           `SELECT id, name, body_part, equipment, target, gif_url FROM exercises ${where} ORDER BY name LIMIT $${paramIndex}`,
           ...params
         );
 
-        return results.map((result) => ({
+        return results.map((result: ExerciseRow) => ({
           id: result.id,
           name: result.name,
           bodyPart: result.body_part,
@@ -116,8 +116,8 @@ export function createAiCoachTools(userId: string) {
         restBetweenRounds,
         exercises,
       }: z.infer<typeof createCircuitSchema>) => {
-        const ids = exercises.map((exercise) => exercise.exerciseId);
-        const found = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
+        const ids = exercises.map((exercise: { exerciseId: string }) => exercise.exerciseId);
+        const found: Array<{ id: string }> = await prisma.$queryRawUnsafe(
           'SELECT id FROM exercises WHERE id = ANY($1::text[])',
           ids
         );
@@ -133,7 +133,7 @@ export function createAiCoachTools(userId: string) {
             restBetweenRounds,
             userId,
             exercises: {
-              create: exercises.map((exercise, index) => ({
+              create: exercises.map((exercise: { exerciseId: string; durationSec: number; restSec: number }, index: number) => ({
                 exerciseId: exercise.exerciseId,
                 durationSec: exercise.durationSec,
                 restSec: exercise.restSec,
