@@ -1,13 +1,16 @@
 'use client';
 
-import { useChat } from 'ai/react';
-import { useState, useSyncExternalStore } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { useState, useSyncExternalStore, useRef, useEffect, useMemo } from 'react';
 import { RegisterModal } from './RegisterModal';
 
 const subscribe = () => () => {};
 
 export function AiCoachChat() {
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
+  const [input, setInput] = useState('');
+  const scrollRef = useRef<HTMLDivElement>(null);
   const isHydrated = useSyncExternalStore(
     subscribe,
     () => true,
@@ -16,16 +19,20 @@ export function AiCoachChat() {
   const storedUserId = isHydrated ? localStorage.getItem('nmg-user-id') : null;
   const userId = registeredUserId ?? storedUserId;
 
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    status,
-  } = useChat({
-    api: '/api/ai-coach',
-    headers: userId ? { 'x-user-id': userId } : undefined,
-  });
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: '/api/ai-coach',
+        headers: userId ? { 'x-user-id': userId } : undefined,
+      }),
+    [userId]
+  );
+
+  const { messages, sendMessage, status } = useChat({ transport });
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
+  }, [messages]);
 
   if (!isHydrated) return null;
 
@@ -39,6 +46,14 @@ export function AiCoachChat() {
     );
   }
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text || status === 'streaming') return;
+    setInput('');
+    sendMessage({ text });
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col">
       <div className="border-b border-zinc-800 px-4 py-3">
@@ -46,7 +61,7 @@ export function AiCoachChat() {
         <p className="text-xs text-zinc-400">Crea circuitos con ayuda de IA</p>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto p-4">
+      <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
             <span className="text-4xl">🤖</span>
@@ -69,7 +84,12 @@ export function AiCoachChat() {
                   : 'bg-zinc-800 text-zinc-100'
               }`}
             >
-              <p className="whitespace-pre-wrap">{message.content}</p>
+              <p className="whitespace-pre-wrap">
+                {message.parts
+                  .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+                  .map(p => p.text)
+                  .join('')}
+              </p>
             </div>
           </div>
         ))}
@@ -88,7 +108,7 @@ export function AiCoachChat() {
           <input
             type="text"
             value={input}
-            onChange={handleInputChange}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Describe el circuito que quieres crear..."
             disabled={status === 'streaming'}
             className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-zinc-500 focus:outline-none disabled:opacity-50"
