@@ -3,25 +3,8 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 
 const searchExercisesSchema = z.object({
-  bodyPart: z
-    .enum([
-      'back',
-      'cardio',
-      'chest',
-      'lower arms',
-      'lower legs',
-      'neck',
-      'shoulders',
-      'upper arms',
-      'upper legs',
-      'waist',
-    ])
-    .optional(),
-  equipment: z.string().optional(),
-  target: z.string().optional(),
-  muscleGroup: z.string().optional(),
-  query: z.string().optional(),
-  limit: z.number().max(20).default(10),
+  query: z.string().describe('Search term: body part, muscle name, exercise name, or equipment. Examples: "shoulders", "chest", "biceps", "dumbbell"'),
+  limit: z.number().max(20).default(10).describe('Max results to return'),
 });
 
 const createCircuitSchema = z.object({
@@ -47,41 +30,11 @@ export function createAiCoachTools(userId: string) {
         'Search exercises in the database by body part, equipment, target, muscle group, or name',
       inputSchema: searchExercisesSchema,
       execute: async ({
-        bodyPart,
-        equipment,
-        target,
-        muscleGroup,
         query,
         limit,
       }: z.infer<typeof searchExercisesSchema>) => {
         try {
-        const conditions: string[] = [];
-        const params: unknown[] = [];
-        let paramIndex = 1;
-
-        if (bodyPart) {
-          conditions.push(`body_part = $${paramIndex++}`);
-          params.push(bodyPart);
-        }
-        if (equipment) {
-          conditions.push(`equipment ILIKE $${paramIndex++}`);
-          params.push(`%${equipment}%`);
-        }
-        if (target) {
-          conditions.push(`target ILIKE $${paramIndex++}`);
-          params.push(`%${target}%`);
-        }
-        if (muscleGroup) {
-          conditions.push(`muscle_group ILIKE $${paramIndex++}`);
-          params.push(`%${muscleGroup}%`);
-        }
-        if (query) {
-          conditions.push(`name ILIKE $${paramIndex++}`);
-          params.push(`%${query}%`);
-        }
-
-        const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-        params.push(limit);
+        const searchTerm = `%${query}%`;
 
         type ExerciseRow = {
           id: string;
@@ -93,8 +46,11 @@ export function createAiCoachTools(userId: string) {
         };
 
         const results: ExerciseRow[] = await prisma.$queryRawUnsafe(
-          `SELECT id, name, body_part, equipment, target, gif_url FROM exercises ${where} ORDER BY name LIMIT $${paramIndex}`,
-          ...params
+          `SELECT id, name, body_part, equipment, target, gif_url FROM exercises
+           WHERE name ILIKE $1 OR body_part ILIKE $1 OR target ILIKE $1 OR muscle_group ILIKE $1 OR equipment ILIKE $1
+           ORDER BY name LIMIT $2`,
+          searchTerm,
+          limit
         );
 
         return results.map((result: ExerciseRow) => ({
