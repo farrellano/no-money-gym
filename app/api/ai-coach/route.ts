@@ -1,4 +1,4 @@
-import { groq } from '@ai-sdk/groq';
+import { groq, type GroqLanguageModelChatOptions } from '@ai-sdk/groq';
 import {
   convertToModelMessages,
   isStepCount,
@@ -41,6 +41,11 @@ export async function POST(req: Request) {
       messages: await convertToModelMessages(uiMessages, { tools }),
       tools,
       stopWhen: isStepCount(5),
+      providerOptions: {
+        groq: {
+          parallelToolCalls: false,
+        } satisfies GroqLanguageModelChatOptions,
+      },
       onError: (event) => {
         console.error('[ai-coach] Stream error:', event.error);
       },
