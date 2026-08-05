@@ -34,15 +34,26 @@ export async function POST(req: Request) {
   const tools = createAiCoachTools(userId);
   const uiMessages = messages as Array<UIMessage<unknown, never, InferUITools<typeof tools>>>;
 
-  const result = streamText({
-    model: groq('llama-3.3-70b-versatile'),
-    system: AI_COACH_SYSTEM_PROMPT,
-    messages: await convertToModelMessages(uiMessages, { tools }),
-    tools,
-    stopWhen: isStepCount(5),
-  });
+  try {
+    const result = streamText({
+      model: groq('llama-3.3-70b-versatile'),
+      system: AI_COACH_SYSTEM_PROMPT,
+      messages: await convertToModelMessages(uiMessages, { tools }),
+      tools,
+      stopWhen: isStepCount(5),
+      onError: (event) => {
+        console.error('[ai-coach] Stream error:', event.error);
+      },
+    });
 
-  return result.toUIMessageStreamResponse({
-    originalMessages: uiMessages,
-  });
+    return result.toUIMessageStreamResponse({
+      originalMessages: uiMessages,
+    });
+  } catch (error) {
+    console.error('[ai-coach] Error:', error);
+    return new Response(
+      JSON.stringify({ error: String(error) }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }

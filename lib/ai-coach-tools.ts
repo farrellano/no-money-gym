@@ -54,6 +54,7 @@ export function createAiCoachTools(userId: string) {
         query,
         limit,
       }: z.infer<typeof searchExercisesSchema>) => {
+        try {
         const conditions: string[] = [];
         const params: unknown[] = [];
         let paramIndex = 1;
@@ -104,6 +105,10 @@ export function createAiCoachTools(userId: string) {
           target: result.target,
           gifUrl: result.gif_url,
         }));
+        } catch (error) {
+          console.error('[searchExercises] Error:', error);
+          return [{ id: 'error', name: `Error: ${String(error)}`, bodyPart: '', equipment: '', target: '', gifUrl: '' }];
+        }
       },
     }),
 
