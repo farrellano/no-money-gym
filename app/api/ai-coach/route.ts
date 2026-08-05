@@ -44,6 +44,7 @@ export async function POST(req: Request) {
       providerOptions: {
         groq: {
           parallelToolCalls: false,
+          structuredOutputs: false,
         } satisfies GroqLanguageModelChatOptions,
       },
       onError: (event) => {
