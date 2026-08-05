@@ -101,6 +101,7 @@ export const translations = {
     // BottomNav
     navExercises: 'Ejercicios',
     navCircuits: 'Circuitos',
+    navAiCoach: 'AI Coach',
     navSettings: 'Ajustes',
 
     // Circuitos page
@@ -257,6 +258,7 @@ export const translations = {
     // BottomNav
     navExercises: 'Exercises',
     navCircuits: 'Circuits',
+    navAiCoach: 'AI Coach',
     navSettings: 'Settings',
 
     // Circuitos page

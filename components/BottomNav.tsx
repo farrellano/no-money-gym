@@ -11,6 +11,7 @@ export function BottomNav() {
   const tabs = [
     { href: '/banco-ejercicios', label: t.navExercises, icon: '💪' },
     { href: '/circuitos', label: t.navCircuits, icon: '🔄' },
+    { href: '/ai-coach', label: t.navAiCoach, icon: '🤖' },
     { href: '/ajustes', label: t.navSettings, icon: '⚙️' },
   ];
 
