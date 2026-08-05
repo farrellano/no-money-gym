@@ -49,7 +49,16 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
   useEffect(() => {
     if (!currentEjercicio) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVideoReady(false);
+    if (
+      'gifUrl' in currentEjercicio &&
+      (currentEjercicio as { gifUrl?: string }).gifUrl
+    ) {
+      setVideoUrl(null);
+      return;
+    }
+
     let url: string | null = null;
     db.videos.get(currentEjercicio.videoId).then((video) => {
       if (video) {
@@ -97,6 +106,7 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
       if (Math.abs(video.currentTime - currentEjercicio.startSec) < 0.5) {
         setVideoReady(true);
       } else if (currentEjercicio.startSec === 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setVideoReady(true);
       } else {
         video.currentTime = currentEjercicio.startSec;
@@ -151,15 +161,30 @@ export function CircuitPlayer({ circuito, ejercicios, config, onExit }: CircuitP
     <div className="fixed inset-0 z-[200] flex flex-col bg-black">
       {/* Video */}
       <div className="flex-1 relative">
-        {videoUrl && (
-          <video
-            ref={videoRef}
-            src={videoUrl}
-            className={`absolute inset-0 w-full h-full object-contain${videoReady ? '' : ' invisible'}`}
-            playsInline
-            muted
-            loop={false}
+        {currentEjercicio &&
+        'gifUrl' in currentEjercicio &&
+        (currentEjercicio as { gifUrl?: string }).gifUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`${process.env.NEXT_PUBLIC_BLOB_BASE_URL || ''}/${(currentEjercicio as { gifUrl: string }).gifUrl}`}
+            alt={
+              (currentEjercicio as { nombre?: string; name?: string }).nombre ||
+              (currentEjercicio as { name?: string }).name ||
+              ''
+            }
+            className="h-48 w-48 rounded-lg object-cover"
           />
+        ) : (
+          videoUrl && (
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              className={`absolute inset-0 w-full h-full object-contain${videoReady ? '' : ' invisible'}`}
+              playsInline
+              muted
+              loop={false}
+            />
+          )
         )}
 
         {/* Overlay: round info */}
