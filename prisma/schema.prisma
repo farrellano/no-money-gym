@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String          @id @default(cuid())
+  username  String          @unique
+  userAgent String?         @map("user_agent")
+  createdAt DateTime        @default(now()) @map("created_at")
+  circuits  SharedCircuit[]
+
+  @@map("users")
+}
+
+model SharedCircuit {
+  id                String                  @id @default(cuid())
+  name              String
+  rounds            Int                     @default(3)
+  restBetweenRounds Int                     @default(30) @map("rest_between_rounds")
+  userId            String                  @map("user_id")
+  user              User                    @relation(fields: [userId], references: [id])
+  shareSlug         String                  @unique @default(cuid()) @map("share_slug")
+  createdAt         DateTime                @default(now()) @map("created_at")
+  exercises         SharedCircuitExercise[]
+
+  @@map("shared_circuits")
+}
+
+model SharedCircuitExercise {
+  id          String        @id @default(cuid())
+  circuitId   String        @map("circuit_id")
+  circuit     SharedCircuit @relation(fields: [circuitId], references: [id], onDelete: Cascade)
+  exerciseId  String        @map("exercise_id")
+  durationSec Int           @map("duration_sec")
+  restSec     Int           @map("rest_sec")
+  order       Int
+
+  @@map("shared_circuit_exercises")
+}
